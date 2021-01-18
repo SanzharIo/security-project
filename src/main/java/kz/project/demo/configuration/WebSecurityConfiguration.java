@@ -2,7 +2,12 @@ package kz.project.demo.configuration;
 
 import kz.project.demo.services.security.AuthenticationFilter;
 import kz.project.demo.services.security.AuthorizationFilter;
+import kz.project.demo.services.security.UserDetailsServiceImpl;
+import kz.project.demo.services.users.UserService;
+import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,8 +23,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     private static final String[] AUTH_WHITELIST = {
             "/v2/api-docs",
@@ -31,20 +38,29 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
             "/webjars/**"
     };
 
-    public WebSecurityConfiguration(UserDetailsService userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    @Autowired
+    public WebSecurityConfiguration(UserDetailsServiceImpl userDetailsService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userDetailsService = userDetailsService;
     }
 
 
     protected void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors().and().csrf().disable().authorizeRequests()
-                .antMatchers(AUTH_WHITELIST).permitAll()
+        httpSecurity
+                .authorizeRequests()
+                .antMatchers("/v1/admin/**").hasRole("ADMIN")
+                .antMatchers("/v1/user/**").hasAnyRole("ADMIN","USER")
                 .antMatchers(HttpMethod.POST, "/v1/users/signup").permitAll()
-                .anyRequest().authenticated()
-                .and().addFilter(new AuthenticationFilter(authenticationManager()))
-                .addFilter(new AuthorizationFilter(authenticationManager()))
+                .antMatchers(AUTH_WHITELIST).permitAll();
+
+
+        httpSecurity
+                .addFilter(new AuthenticationFilter(authenticationManager(), userDetailsService))
+                .addFilter(new AuthorizationFilter(authenticationManager(), userDetailsService))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        httpSecurity.cors().and().csrf().disable();
     }
 
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {

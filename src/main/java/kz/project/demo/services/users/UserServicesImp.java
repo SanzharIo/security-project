@@ -1,6 +1,6 @@
 package kz.project.demo.services.users;
 
-import kz.project.demo.model.entities.User;
+import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,27 +14,22 @@ public class UserServicesImp implements UserService {
     private UserRepository repository;
 
     @Override
-    public List<User> getAllUsers() {
+    public List<AuthorizedUser> getAllUsers() {
         return repository.getAllByDeletedAtIsNull();
     }
 
     @Override
-    public User getOneById(Long id) {
+    public AuthorizedUser getOneById(Long id) {
         return repository.getUsersById(id);
     }
 
     @Override
-    public User getUserByEmail(String email) {
-        return repository.getUsersByEmailAndDeletedAtNotNull(email);
+    public AuthorizedUser getUserByPhone(String phone) {
+        return repository.getAllByPhoneAndDeletedAtIsNull(phone);
     }
 
     @Override
-    public User getUserByPhone(String phone) {
-        return repository.getAllByPhoneAndDeletedAtNotNull(phone);
-    }
-
-    @Override
-    public User save(User user) {
-        return repository.save(user);
+    public AuthorizedUser save(AuthorizedUser authorizedUser) {
+        return repository.save(authorizedUser);
     }
 }

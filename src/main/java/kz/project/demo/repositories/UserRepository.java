@@ -1,20 +1,17 @@
 package kz.project.demo.repositories;
 
-import kz.project.demo.model.entities.User;
+import kz.project.demo.model.entities.AuthorizedUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<AuthorizedUser, Long> {
 
-    List<User> getAllByDeletedAtIsNull();
+    List<AuthorizedUser> getAllByDeletedAtIsNull();
 
-    User getUsersById(Long id);
+    AuthorizedUser getUsersById(Long id);
 
-    User getUsersByEmailAndDeletedAtNotNull(String email);
+    AuthorizedUser getAllByPhoneAndDeletedAtIsNull(String phone);
 
-    User getAllByPhoneAndDeletedAtNotNull(String phone);
-
-    User getByPhone(String phone);
 
 }

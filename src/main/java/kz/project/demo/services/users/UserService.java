@@ -1,18 +1,17 @@
 package kz.project.demo.services.users;
 
-import kz.project.demo.model.entities.User;
+import kz.project.demo.model.entities.AuthorizedUser;
 
 import java.util.List;
 
 public interface UserService {
 
-    List<User> getAllUsers();
+    List<AuthorizedUser> getAllUsers();
 
-    User getOneById(Long id);
+    AuthorizedUser getOneById(Long id);
 
-    User getUserByEmail(String email);
 
-    User getUserByPhone(String phone);
+    AuthorizedUser getUserByPhone(String phone);
 
-    User save(User user);
+    AuthorizedUser save(AuthorizedUser authorizedUser);
 }

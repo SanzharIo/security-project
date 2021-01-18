@@ -1,9 +1,9 @@
 package kz.project.demo.controllers;
 
 import kz.project.demo.model.entities.Role;
-import kz.project.demo.model.entities.User;
-import kz.project.demo.repositories.RoleRepository;
-import kz.project.demo.repositories.UserRepository;
+import kz.project.demo.model.entities.AuthorizedUser;
+import kz.project.demo.model.errors.ErrorCode;
+import kz.project.demo.model.errors.ServiceException;
 import kz.project.demo.services.roles.RoleService;
 import kz.project.demo.services.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping(value = "/v1/users")
+@RequestMapping(value = "/v1/user")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -29,29 +29,30 @@ public class UserController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/signup")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public ResponseEntity<HttpStatus> signUp(@RequestBody AuthorizedUser authorizedUser) {
+        authorizedUser.setPassword(bCryptPasswordEncoder.encode(authorizedUser.getPassword()));
 
-        if (userService.getUserByPhone(user.getPhone()) != null) {
-            return ResponseEntity.ok().body(HttpStatus.IM_USED);
+        if (userService.getUserByPhone(authorizedUser.getPhone()) != null) {
+            throw ServiceException.builder().message("Такой телефон уже существует").errorCode(ErrorCode.ALREADY_EXISTS).httpStatus(HttpStatus.IM_USED).build();
         }
 
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.getOneById(2L));
 
-        user.setRoles(roles);
-        userService.save(user);
+        authorizedUser.setRoles(roles);
+        userService.save(authorizedUser);
         return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
-    @PostMapping("/getAll")
-    public ResponseEntity<List<User>> getAllUsers() {
+    @PostMapping("/getAllUsers")
+    public ResponseEntity<List<AuthorizedUser>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
-    @PostMapping("/getOne")
-    public ResponseEntity<User> getOneUser(@RequestParam Long id) {
+    @PostMapping("/getOneUser")
+    public ResponseEntity<AuthorizedUser> getOneUser(@RequestParam Long id) {
         return ResponseEntity.ok().body(userService.getOneById(id));
     }
+
 
 }

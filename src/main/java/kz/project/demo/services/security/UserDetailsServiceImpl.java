@@ -1,41 +1,38 @@
 package kz.project.demo.services.security;
 
-import kz.project.demo.model.entities.User;
+import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.errors.ErrorCode;
 import kz.project.demo.model.errors.ServiceException;
 import kz.project.demo.repositories.UserRepository;
+import kz.project.demo.services.users.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Map;
-
 @Component
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        User user = userRepository.getByPhone(phone);
-        if (user == null) {
-            throw ServiceException.builder().message("Такой телефон уже существует").httpStatus(HttpStatus.IM_USED).errorCode(ErrorCode.ALREADY_EXISTS).build();
+        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
+        if (authorizedUser == null) {
+            throw ServiceException.builder().message("Такой телефон не существует").httpStatus(HttpStatus.NOT_FOUND).errorCode(ErrorCode.AUTH_ERROR).build();
         }
-        return new org.springframework.security.core.userdetails.User(user.getPhone(), user.getPassword(), user.getRoles());
+        return new org.springframework.security.core.userdetails.User(authorizedUser.getPhone(), authorizedUser.getPassword(), authorizedUser.getRoles());
     }
 
-    public User checkUsername(String phone) {
-        User user = userRepository.getByPhone(phone);
-        if (user == null) {
+    public AuthorizedUser checkUser(String phone) {
+        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
+        if (authorizedUser == null) {
             throw ServiceException.builder().message("Такого юзера не существует").errorCode(ErrorCode.AUTH_ERROR).httpStatus(HttpStatus.NOT_FOUND).build();
         }
-        return user;
+        return authorizedUser;
     }
 
 }
