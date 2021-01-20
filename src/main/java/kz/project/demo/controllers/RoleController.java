@@ -1,7 +1,6 @@
 package kz.project.demo.controllers;
 
 import kz.project.demo.model.entities.Role;
-import kz.project.demo.repositories.RoleRepository;
 import kz.project.demo.services.roles.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

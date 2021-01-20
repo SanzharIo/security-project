@@ -55,22 +55,22 @@ public class AuthorizedUser extends AuditModel implements Serializable {
     private String userLevel;
 
     @Column(name = "bottom_line")
-    private int bottomLine;
+    private int bottomLine = 0;
 
     @Column(name = "upper_line")
-    private int upperLine;
+    private int upperLine = 0   ;
 
     @Column(name = "raw_calculation")
     private int rawCalculation;
 
-    @Column(name = "subcategory")
-    private List<SubCategoryChildModel> subCategoryChildModels;
-
-    @Column(name = "user_schedule")
-    private List<ProcessorSchedule> userSchedule;
-
-    @Column(name = "collection_map")
-    private List<CreateMap> collectionMap;
+//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+//    private List<SubCategoryChildModel> subCategoryChildModels;
+//
+//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+//    private List<ProcessorSchedule> userSchedule;
+//
+//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+//    private List<CreateMap> collectionMap;
 
     @Column(name = "password")
     private String password;

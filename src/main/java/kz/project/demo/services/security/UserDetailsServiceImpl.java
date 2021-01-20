@@ -3,7 +3,6 @@ package kz.project.demo.services.security;
 import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.errors.ErrorCode;
 import kz.project.demo.model.errors.ServiceException;
-import kz.project.demo.repositories.UserRepository;
 import kz.project.demo.services.users.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,11 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public AuthorizedUser checkUser(String phone) {
-        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
-        if (authorizedUser == null) {
-            throw ServiceException.builder().message("Такого юзера не существует").errorCode(ErrorCode.AUTH_ERROR).httpStatus(HttpStatus.NOT_FOUND).build();
-        }
-        return authorizedUser;
+        return userService.getUserByPhone(phone);
     }
 
 }
