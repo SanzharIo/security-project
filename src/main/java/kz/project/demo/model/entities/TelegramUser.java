@@ -2,10 +2,7 @@ package kz.project.demo.model.entities;
 
 
 import kz.project.demo.model.audit.AuditModel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -15,9 +12,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+@Builder
 public class TelegramUser extends AuditModel {
 
-    @Column(name = "name")
+    @Column(name = "chat_id")
+    private Long chatId;
+
+    @Column(name = "phone_nubmer")
     private String phone;
 
     @Column(name = "name")

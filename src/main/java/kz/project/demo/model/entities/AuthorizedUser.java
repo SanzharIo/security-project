@@ -20,7 +20,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorizedUser extends AuditModel implements Serializable {
 
-    @Column(name = "phone")
+    @Column(name = "phone",unique = true)
     @JsonProperty("username")
     private String phone;
 
@@ -62,6 +62,9 @@ public class AuthorizedUser extends AuditModel implements Serializable {
 
     @Column(name = "raw_calculation")
     private int rawCalculation;
+
+    @Column(name = "validation_key")
+    private String validationKey;
 
 //    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 //    private List<SubCategoryChildModel> subCategoryChildModels;
