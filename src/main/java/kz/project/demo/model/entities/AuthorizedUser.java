@@ -7,7 +7,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
@@ -20,24 +19,24 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthorizedUser extends AuditModel implements Serializable {
 
-    @Column(name = "phone",unique = true)
+    @Column(name = "phone", unique = true)
     @JsonProperty("username")
     private String phone;
+
+    @Column(name = "name")
+    private String name;
 
     @Column(name = "city")
     private String city;
 
-    @Column(name = "city_id")
-    private int city_id;
+    @Column(name = "qrImage")
+    private String qrImage;
+
+    @Column(name = "points")
+    private int points;
 
     @Column(name = "geolocation")
     private String geolocation;
-
-    @Column(name = "title")
-    private String title;
-
-    @Column(name = "contact")
-    private String contact;
 
     @Column(name = "description")
     private String description;
@@ -58,28 +57,19 @@ public class AuthorizedUser extends AuditModel implements Serializable {
     private int bottomLine = 0;
 
     @Column(name = "upper_line")
-    private int upperLine = 0   ;
+    private int upperLine = 0;
 
     @Column(name = "raw_calculation")
     private int rawCalculation;
+
+    @Column(name = "password")
+    private String password;
 
     @Column(name = "validation_key")
     private String validationKey;
 
     @Column(name = "is_valid")
     private Boolean isValid = false;
-
-//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-//    private List<SubCategoryChildModel> subCategoryChildModels;
-//
-//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-//    private List<ProcessorSchedule> userSchedule;
-//
-//    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-//    private List<CreateMap> collectionMap;
-
-    @Column(name = "password")
-    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Role> roles;

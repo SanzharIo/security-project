@@ -20,7 +20,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
 
     private UserDetailsServiceImpl userDetailsService;
 
-    public AuthorizationFilter(AuthenticationManager authenticationManager,UserDetailsServiceImpl userDetailsService) {
+    public AuthorizationFilter(AuthenticationManager authenticationManager, UserDetailsServiceImpl userDetailsService) {
         super(authenticationManager);
         this.userDetailsService = userDetailsService;
     }

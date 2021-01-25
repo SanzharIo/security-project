@@ -4,10 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class ProcessorSchedule{
+public class ProcessorSchedule {
+
+    @Id
     private Long id;
     private int name;
     private String startAtTime;

@@ -37,7 +37,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         try {
             AuthorizedUser creds = new ObjectMapper().readValue(request.getInputStream(), AuthorizedUser.class);
             AuthorizedUser authorizedUser = userDetailsService.checkUser(creds.getPhone());
-            if (!authorizedUser.getIsValid()){
+            if (!authorizedUser.getIsValid()) {
                 throw ServiceException.builder().httpStatus(HttpStatus.LOCKED).errorCode(ErrorCode.IS_NOT_ACTIVATED).build();
             }
             return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authorizedUser.getPhone(), creds.getPassword(), authorizedUser.getRoles()));

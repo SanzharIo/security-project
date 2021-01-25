@@ -1,4 +1,4 @@
-package kz.project.demo.services.users;
+package kz.project.demo.services.users.v1;
 
 import kz.project.demo.model.entities.AuthorizedUser;
 

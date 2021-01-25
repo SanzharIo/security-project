@@ -34,6 +34,7 @@ public class TelegramUserServiceImp implements TelegramUserService {
     public TelegramUser getOneByChatId(Long id) {
         return repository.getByChatIdAndDeletedAtIsNull(id);
     }
+
     @Override
     public void save(TelegramUser telegramUser) {
         repository.save(telegramUser);

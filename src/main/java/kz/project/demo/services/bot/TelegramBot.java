@@ -3,7 +3,7 @@ package kz.project.demo.services.bot;
 import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.entities.TelegramUser;
 import kz.project.demo.services.telegramUsers.TelegramUserService;
-import kz.project.demo.services.users.UserService;
+import kz.project.demo.services.users.v1.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;

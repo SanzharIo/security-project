@@ -3,7 +3,7 @@ package kz.project.demo.services.security;
 import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.errors.ErrorCode;
 import kz.project.demo.model.errors.ServiceException;
-import kz.project.demo.services.users.UserService;
+import kz.project.demo.services.users.v1.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;

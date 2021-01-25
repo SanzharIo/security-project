@@ -1,9 +1,7 @@
 package kz.project.demo.model.entities;
 
-import kz.project.demo.model.audit.AuditModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 

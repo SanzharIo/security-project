@@ -31,20 +31,20 @@ public abstract class AuditModel implements Serializable {
     private Date deletedAt;
 
     @PrePersist
-    private void prePersisty(){
-        if (this.createdAt == null){
-            createdAt= new Date();
+    private void prePersisty() {
+        if (this.createdAt == null) {
+            createdAt = new Date();
         }
     }
 
     @PreUpdate
-    private void preUpdate(){
+    private void preUpdate() {
         this.updatedAt = new Date();
     }
 
     @PreRemove
-    private void preRemove(){
-        if (this.deletedAt == null){
+    private void preRemove() {
+        if (this.deletedAt == null) {
             this.deletedAt = new Date();
         }
     }

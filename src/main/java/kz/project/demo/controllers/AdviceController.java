@@ -13,7 +13,8 @@ public class AdviceController {
     public ResponseEntity<?> errors(ServiceException e) {
         return new ResponseEntity<>(buildErrorResponse(e), e.getHttpStatus());
     }
-    private ErrorResponse buildErrorResponse(ServiceException serviceException){
+
+    private ErrorResponse buildErrorResponse(ServiceException serviceException) {
         return ErrorResponse.builder()
                 .code(serviceException.getErrorCode())
                 .message(serviceException.getMessage())

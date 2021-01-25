@@ -4,8 +4,9 @@ import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.entities.Role;
 import kz.project.demo.model.errors.ErrorCode;
 import kz.project.demo.model.errors.ServiceException;
+import kz.project.demo.model.requests.RegistrationRequest;
 import kz.project.demo.services.roles.RoleService;
-import kz.project.demo.services.users.UserService;
+import kz.project.demo.services.users.v1.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,10 @@ public class AuthController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/signup")
-    public ResponseEntity<HttpStatus> signUp(@RequestBody AuthorizedUser authorizedUser) {
+    public ResponseEntity<HttpStatus> signUp(@RequestBody RegistrationRequest registrationRequest) {
+        AuthorizedUser authorizedUser = new AuthorizedUser();
+        authorizedUser.setPassword(registrationRequest.getPhone());
+
         authorizedUser.setPassword(bCryptPasswordEncoder.encode(authorizedUser.getPassword()));
 
         if (userService.getUserByPhone(authorizedUser.getPhone()) != null) {
@@ -41,16 +45,28 @@ public class AuthController {
         }
 
         Set<Role> roles = new HashSet<>();
-        roles.add(roleRepository.getOneById(2L));
+        switch (registrationRequest.getUserType()) {
+            case "user":
+                roles.add(roleRepository.getOneById(2L));
+                break;
+            case "seller":
+                roles.add(roleRepository.getOneById(3L));
+                break;
+            case "admin":
+                roles.add(roleRepository.getOneById(1L));
+                break;
+        }
         String generatedString = RandomStringUtils.random(6, false, true);
+
         authorizedUser.setValidationKey(generatedString);
         authorizedUser.setIsValid(false);
         authorizedUser.setRoles(roles);
+
         userService.save(authorizedUser);
         return ResponseEntity.ok().body(HttpStatus.OK);
     }
 
-    @PostMapping("/activation")
+    @PostMapping("/active")
     public ResponseEntity<HttpStatus> accountActivation(@RequestParam String phone, @RequestParam String key) {
 
         AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
