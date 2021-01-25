@@ -14,8 +14,6 @@ public interface TelegramUserService {
 
     TelegramUser getOneByChatId(Long id);
 
-    TelegramUser getOnByChatId(Long id);
-
     void save(TelegramUser telegramUser);
 
     void delete(Long id);

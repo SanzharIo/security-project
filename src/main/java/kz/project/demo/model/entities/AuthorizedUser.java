@@ -66,6 +66,9 @@ public class AuthorizedUser extends AuditModel implements Serializable {
     @Column(name = "validation_key")
     private String validationKey;
 
+    @Column(name = "is_valid")
+    private Boolean isValid = false;
+
 //    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 //    private List<SubCategoryChildModel> subCategoryChildModels;
 //

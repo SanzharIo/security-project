@@ -10,8 +10,6 @@ public interface UserService {
 
     AuthorizedUser getOneById(Long id);
 
-    String getValidationKeyByPhone(String phone);
-
     AuthorizedUser getUserByPhone(String phone);
 
     AuthorizedUser save(AuthorizedUser authorizedUser);

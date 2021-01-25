@@ -11,7 +11,14 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Contact;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TelegramBot extends TelegramLongPollingCommandBot {
@@ -27,36 +34,97 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         Message message = update.getMessage();
         Contact contact = message.getContact();
         String text = message.getText();
+        User user = message.getFrom();
+
+        if (contact != null) {
+            TelegramUser telegramUser = telegramUserService.getOneByChatId(message.getChatId());
+            telegramUser.setPhone(contact.getPhoneNumber());
+            AuthorizedUser authorizedUser = userService.getUserByPhone(telegramUser.getPhone());
+            if (authorizedUser != null) {
+                telegramUser.setAuthorizedUser(authorizedUser);
+            } else {
+                setAnswer(message.getChatId(), "Thank you");
+                setAnswer(message.getChatId(), "Now press the button /activationKey");
+            }
+            telegramUserService.save(telegramUser);
+        }
+
         if (update.hasMessage() && update.getMessage().hasText())
             switch (text) {
                 case "/start":
-                    TelegramUser tUser = telegramUserService.getOnByChatId(message.getChatId());
+                case "start":
+                case "Start":
+                    TelegramUser tUser = telegramUserService.getOneByChatId(message.getChatId());
                     if (tUser == null) {
-                        String userPhone = contact.getPhoneNumber();
                         TelegramUser telegramUser = TelegramUser.builder()
-                                .phone(userPhone)
                                 .chatId(message.getChatId())
-                                .name(contact.getFirstName())
-                                .surname(contact.getLastName())
+                                .name(user.getFirstName())
+                                .surname(user.getLastName())
                                 .build();
-                        if (telegramUser.getPhone() != null) {
-                            AuthorizedUser authorizedUser = userService.getUserByPhone(telegramUser.getPhone());
-                            telegramUser.setAuthorizedUser(authorizedUser);
-                        }
                         telegramUserService.save(telegramUser);
                     }
                     setAnswer(message.getChatId(), "Welcome to test market");
                     break;
 
-                case "/activation-code":
-                    if (contact.getPhoneNumber() == null) {
-                        setAnswer(message.getChatId(), "Please disable your hiding number phone");
+                case "/activationKey":
+                case "Get activation key":
+                    TelegramUser telegramUser = telegramUserService.getOneByChatId(message.getChatId());
+                    if (telegramUser.getPhone() != null) {
+                        AuthorizedUser authorizedUser = userService.getUserByPhone(("+" + telegramUser.getPhone()).trim());
+                        if (authorizedUser != null) {
+                            telegramUser.setAuthorizedUser(authorizedUser);
+                            telegramUserService.save(telegramUser);
+                            if (authorizedUser.getIsValid()) {
+                                setAnswer(message.getChatId(), "You have already activated your account");
+                            } else {
+                                setAnswer(message.getChatId(), authorizedUser.getValidationKey());
+                            }
+                        } else {
+                            setAnswer(message.getChatId(), "You didn't registered you account");
+                            setAnswer(message.getChatId(), "Please check your phone or pass the registration on");
+                            setAnswer(message.getChatId(), "http://test-market.kz");
+                        }
                     } else {
-                        AuthorizedUser authorizedUser = userService.getUserByPhone(contact.getPhoneNumber());
-                        setAnswer(message.getChatId(), "Your activation key " + authorizedUser.getValidationKey());
+                        setAnswer(message.getChatId(), "Please press (Share your number >) in order to show your phone number" +
+                                "\n then press the Get activation key button or type /activationKey");
                     }
                     break;
             }
+    }
+
+
+    private ReplyKeyboardMarkup setKeyBoard() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(true);
+
+        // new list
+        List<KeyboardRow> keyboard = new ArrayList<>();
+
+        // first keyboard line
+        KeyboardRow keyboardFirstRow = new KeyboardRow();
+
+        KeyboardButton kb1 = new KeyboardButton();
+        kb1.setText("Get activation key");
+        keyboardFirstRow.add(kb1);
+
+        // second keyboard line
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
+
+        KeyboardButton kb2 = new KeyboardButton();
+        kb2.setText("Share your number >");
+        kb2.setRequestContact(true);
+        keyboardSecondRow.add(kb2);
+
+
+        // add array to list
+        keyboard.add(keyboardFirstRow);
+        keyboard.add(keyboardSecondRow);
+
+        // add list to our keyboard
+        replyKeyboardMarkup.setKeyboard(keyboard);
+        return replyKeyboardMarkup;
     }
 
 
@@ -64,6 +132,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         SendMessage answer = new SendMessage();
         answer.setText(text);
         answer.setChatId(chatId.toString());
+        answer.setReplyMarkup(setKeyBoard());
+
         try {
             execute(answer);
         } catch (TelegramApiException e) {

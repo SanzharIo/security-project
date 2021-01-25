@@ -24,11 +24,6 @@ public class UserServicesImp implements UserService {
     }
 
     @Override
-    public String getValidationKeyByPhone(String phone) {
-        return repository.getValidationKeyByPhone(phone);
-    }
-
-    @Override
     public AuthorizedUser getUserByPhone(String phone) {
         return repository.getAllByPhoneAndDeletedAtIsNull(phone);
     }

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
@@ -34,15 +35,38 @@ public class AuthController {
         authorizedUser.setPassword(bCryptPasswordEncoder.encode(authorizedUser.getPassword()));
 
         if (userService.getUserByPhone(authorizedUser.getPhone()) != null) {
-            throw ServiceException.builder().message("Такой телефон уже существует").errorCode(ErrorCode.ALREADY_EXISTS).httpStatus(HttpStatus.IM_USED).build();
+            throw ServiceException.builder().message("Такой телефон уже существует")
+                    .errorCode(ErrorCode.ALREADY_EXISTS)
+                    .httpStatus(HttpStatus.IM_USED).build();
         }
 
         Set<Role> roles = new HashSet<>();
         roles.add(roleRepository.getOneById(2L));
         String generatedString = RandomStringUtils.random(6, false, true);
         authorizedUser.setValidationKey(generatedString);
+        authorizedUser.setIsValid(false);
         authorizedUser.setRoles(roles);
         userService.save(authorizedUser);
         return ResponseEntity.ok().body(HttpStatus.OK);
+    }
+
+    @PostMapping("/activation")
+    public ResponseEntity<HttpStatus> accountActivation(@RequestParam String phone, @RequestParam String key) {
+
+        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
+        if (!authorizedUser.getIsValid()) {
+            if (authorizedUser.getValidationKey().equals(key)) {
+                authorizedUser.setIsValid(true);
+            } else {
+                throw ServiceException.builder().message("incorrect activation key")
+                        .httpStatus(HttpStatus.FORBIDDEN)
+                        .errorCode(ErrorCode.INVALID_AUTHENTICATION_KEY).build();
+            }
+        } else {
+            throw ServiceException.builder().message("account was already activated")
+                    .httpStatus(HttpStatus.IM_USED)
+                    .errorCode(ErrorCode.INVALID_AUTHENTICATION_KEY).build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
