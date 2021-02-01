@@ -44,7 +44,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers("/v1/admin/**").hasRole("ADMIN")
-                .antMatchers("/v1/user/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/v1/users/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/v1/sellers/**").hasAnyRole("ADMIN", "SELLER")
                 .antMatchers(HttpMethod.POST, "/signup").permitAll()
                 .antMatchers(AUTH_WHITELIST).permitAll();
 

@@ -9,29 +9,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequestMapping(value = "/v1/users")
 public class UserController {
+
     @Autowired
     private UserService userService;
 
-    @GetMapping("/getAllUsers")
-    public ResponseEntity<List<AuthorizedUser>> getAllUsers() {
-        return ResponseEntity.ok().body(userService.getAllUsers());
-    }
-
-    @GetMapping("/getOneUser")
-    public ResponseEntity<AuthorizedUser> getOneUser(@RequestParam Long id) {
-        return ResponseEntity.ok().body(userService.getOneById(id));
-    }
-
     @GetMapping("/profile")
-    public ResponseEntity<AuthorizedUser> userProfile(@RequestParam Long id) {
-        AuthorizedUser authorizedUser = userService.getOneById(id);
+    public ResponseEntity<AuthorizedUser> userProfile(@RequestParam String phone) {
+        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
         return ResponseEntity.ok().body(authorizedUser);
     }
-
 
 }

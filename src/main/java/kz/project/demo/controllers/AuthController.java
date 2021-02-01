@@ -85,4 +85,21 @@ public class AuthController {
         }
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/changePassword")
+    public ResponseEntity<HttpStatus> passwordChanging(@RequestParam String phone, @RequestParam String password,
+                                                        @RequestParam String rePassword, @RequestParam String newPassword){
+        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
+        String newUserPassword = bCryptPasswordEncoder.encode(newPassword);
+        if (authorizedUser.getPhone().equals(newUserPassword)) {
+            if (password.equals(rePassword)) {
+                authorizedUser.setPassword(newUserPassword);
+            } else {
+                throw ServiceException.builder().httpStatus(HttpStatus.BAD_REQUEST).errorCode(ErrorCode.PASSWORDS_MISMATCH).message("Пароли не совподают").build();
+            }
+        }else {
+            throw ServiceException.builder().httpStatus(HttpStatus.FORBIDDEN).errorCode(ErrorCode.PASSWORDS_MISMATCH).message("Вы ввели неправельны пароль").build();
+        }
+        return ResponseEntity.ok().build();
+    }
 }
