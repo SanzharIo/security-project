@@ -23,9 +23,4 @@ public class PageResponse {
     private SortResponse sortResponse;
     private Boolean empty;
     private PageableResponse pageable;
-    private Double sum = 0.0;
-    private Double bonus = 0.0;
-    private Double bonusGained = 0.0;
-    private Double cash = 0.0;
-    private Double creditCard = 0.0;
 }

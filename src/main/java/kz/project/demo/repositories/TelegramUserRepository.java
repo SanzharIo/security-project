@@ -13,4 +13,5 @@ public interface TelegramUserRepository extends JpaRepository<TelegramUser, Long
 
     TelegramUser getByChatIdAndDeletedAtIsNull(Long id);
 
+
 }

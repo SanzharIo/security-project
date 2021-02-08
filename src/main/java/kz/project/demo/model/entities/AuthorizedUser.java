@@ -29,7 +29,7 @@ public class AuthorizedUser extends AuditModel implements Serializable {
     @Column(name = "city")
     private String city;
 
-    @Column(name = "qrImage")
+    @Column(name = "qr_image")
     private String qrImage;
 
     @Column(name = "points")

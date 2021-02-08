@@ -2,7 +2,7 @@ package kz.project.demo.services.bot;
 
 import kz.project.demo.model.entities.AuthorizedUser;
 import kz.project.demo.model.entities.TelegramUser;
-import kz.project.demo.services.telegramUsers.TelegramUserService;
+import kz.project.demo.services.telegramUsers.v1.TelegramUserService;
 import kz.project.demo.services.users.v1.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
         if (contact != null) {
             TelegramUser telegramUser = telegramUserService.getOneByChatId(message.getChatId());
             telegramUser.setPhone(contact.getPhoneNumber());
-            AuthorizedUser authorizedUser = userService.getUserByPhone(telegramUser.getPhone());
+            AuthorizedUser authorizedUser = userService.getByPhone(telegramUser.getPhone());
             if (authorizedUser != null) {
                 telegramUser.setAuthorizedUser(authorizedUser);
             } else {
@@ -70,7 +70,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
                 case "Get activation key":
                     TelegramUser telegramUser = telegramUserService.getOneByChatId(message.getChatId());
                     if (telegramUser.getPhone() != null) {
-                        AuthorizedUser authorizedUser = userService.getUserByPhone(("+" + telegramUser.getPhone()).trim());
+                        AuthorizedUser authorizedUser = userService.getByPhone(("+" + telegramUser.getPhone()).trim());
                         if (authorizedUser != null) {
                             telegramUser.setAuthorizedUser(authorizedUser);
                             telegramUserService.save(telegramUser);
@@ -80,9 +80,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
                                 setAnswer(message.getChatId(), authorizedUser.getValidationKey());
                             }
                         } else {
-                            setAnswer(message.getChatId(), "You didn't registered you account");
-                            setAnswer(message.getChatId(), "Please check your phone or pass the registration on");
-                            setAnswer(message.getChatId(), "http://test-market.kz");
+                            setAnswer(message.getChatId(), "You have not registered your account");
+                            setAnswer(message.getChatId(), "Please go to registration page in order to create your account");
+                            setAnswer(message.getChatId(), "http://test.kz");
                         }
                     } else {
                         setAnswer(message.getChatId(), "Please press (Share your number >) in order to show your phone number" +

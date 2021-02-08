@@ -1,4 +1,4 @@
-package kz.project.demo.services.telegramUsers;
+package kz.project.demo.services.telegramUsers.v1;
 
 import kz.project.demo.model.entities.TelegramUser;
 

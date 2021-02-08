@@ -1,4 +1,4 @@
-package kz.project.demo.controllers;
+package kz.project.demo.controllers.errors;
 
 import kz.project.demo.model.errors.ErrorResponse;
 import kz.project.demo.model.errors.ServiceException;

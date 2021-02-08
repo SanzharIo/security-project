@@ -5,7 +5,6 @@ import kz.project.demo.services.security.AuthorizationFilter;
 import kz.project.demo.services.security.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,10 +43,15 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         httpSecurity
                 .authorizeRequests()
                 .antMatchers("/v1/admin/**").hasRole("ADMIN")
-                .antMatchers("/v1/users/**").hasAnyRole("ADMIN", "USER")
-                .antMatchers("/v1/sellers/**").hasAnyRole("ADMIN", "SELLER")
-                .antMatchers(HttpMethod.POST, "/signup").permitAll()
+                .antMatchers("/v1/user/**").hasAnyRole("ADMIN", "USER")
+                .antMatchers("/v1/seller/**").hasAnyRole("ADMIN", "SELLER")
+                .antMatchers("/v1/auth/**").permitAll()
                 .antMatchers(AUTH_WHITELIST).permitAll();
+
+        httpSecurity
+                .formLogin()
+                .usernameParameter("phone")
+                .passwordParameter("password");
 
 
         httpSecurity

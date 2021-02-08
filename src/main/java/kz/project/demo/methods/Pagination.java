@@ -1,8 +1,11 @@
 package kz.project.demo.methods;
 
 import kz.project.demo.model.entities.AuthorizedUser;
-import kz.project.demo.model.response.UserResponse;
+import kz.project.demo.paginator.PageResponse;
+import kz.project.demo.paginator.PageableResponse;
+import kz.project.demo.paginator.SortResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -31,28 +34,29 @@ public class Pagination {
         return PageRequest.of(page.orElse(0), size.orElse(5), sort);
     }
 
-    public UserResponse convertToUserResponse(AuthorizedUser authorizedUser) {
-
-        UserResponse userResponse = UserResponse.builder()
-                .id(authorizedUser.getId())
-                .phone(authorizedUser.getPhone())
-                .name(authorizedUser.getName())
-                .city(authorizedUser.getCity())
-                .qrImage(authorizedUser.getQrImage())
-                .points(authorizedUser.getPoints())
-                .geolocation(authorizedUser.getGeolocation())
-                .description(authorizedUser.getDescription())
-                .image(authorizedUser.getImage())
-                .point_image(authorizedUser.getPoint_image())
-                .experience(authorizedUser.getExperience())
-                .userLevel(authorizedUser.getUserLevel())
-                .bottomLine(authorizedUser.getBottomLine())
-                .upperLine(authorizedUser.getUpperLine())
-                .rawCalculation(authorizedUser.getRawCalculation())
-                .updatedAt(authorizedUser.getUpdatedAt())
-                .deletedAt(authorizedUser.getDeletedAt())
-                .createdAt(authorizedUser.getCreatedAt())
+    public PageResponse convertToPageResponse(List<AuthorizedUser> users, Page<?> page) {
+        SortResponse sortResponse = SortResponse.builder()
+                .sorted(page.getSort().isSorted())
+                .unsorted(page.getSort().isUnsorted())
+                .empty(page.getSort().isEmpty())
                 .build();
-        return userResponse;
+
+        PageableResponse pageableResponse = PageableResponse.builder()
+                .sortResponse(sortResponse)
+                .pageNumber(page.getPageable().getPageNumber())
+                .pageSize(page.getPageable().getPageSize())
+                .paged(page.getPageable().isPaged())
+                .build();
+
+        return PageResponse.builder()
+                .totalPages(page.getTotalPages())
+                .content(users)
+                .last(page.isLast())
+                .first(page.isFirst())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .pageable(pageableResponse)
+                .numberOfElements(page.getNumberOfElements())
+                .build();
     }
 }

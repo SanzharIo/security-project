@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String phone) throws UsernameNotFoundException {
-        AuthorizedUser authorizedUser = userService.getUserByPhone(phone);
+        AuthorizedUser authorizedUser = checkUser(phone);
         if (authorizedUser == null) {
             throw ServiceException.builder().message("Такой телефон не существует").httpStatus(HttpStatus.NOT_FOUND).errorCode(ErrorCode.AUTH_ERROR).build();
         }
@@ -27,7 +27,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public AuthorizedUser checkUser(String phone) {
-        return userService.getUserByPhone(phone);
+        return userService.getByPhone(phone);
     }
 
 }
